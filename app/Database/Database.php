@@ -2,8 +2,8 @@
 
 namespace App\Database;
 
-use PDO;
 use App\DTO\CapturedRequest;
+use PDO;
 
 class Database
 {
@@ -12,6 +12,14 @@ class Database
     public function __construct()
     {
         $dbPath = getenv('DB_PATH');
+
+        if (!$dbPath) {
+            throw new \RuntimeException('DB_PATH environment variable not set');
+        }
+
+        if (!file_exists($dbPath)) {
+            touch($dbPath);
+        }
 
         $this->pdo = new PDO('sqlite:' . $dbPath);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
