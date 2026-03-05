@@ -1,0 +1,14 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www
+    environment:
+      DB_PATH: /var/www/storage/database.sqlite
+    restart: unless-stopped
+
