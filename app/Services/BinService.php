@@ -58,13 +58,18 @@ class BinService
         return $this->db->exists($bin);
     }
 
-    public function getBinId(string $bin): int 
+    public function getBinId(string $bin): ?int
     {
         return $this->db->getBinId($bin);
     }
 
-    public function getRequests(int $id): array 
+    public function getRequests(int $id): array
     {
         return $this->db->getRequests($id);
+    }
+
+    public function isExpired(string $bin): bool
+    {
+        return $this->db->expired($bin);
     }
 }

@@ -34,7 +34,8 @@ class Database
             CREATE TABLE IF NOT EXISTS bins (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 bin TEXT NOT NULL UNIQUE,
-                created_at INTEGER NOT NULL
+                created_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL
             );
 
             CREATE TABLE IF NOT EXISTS requests (
@@ -55,6 +56,19 @@ class Database
         $this->pdo->exec($sql);
     }
 
+    public function insert(string $bin): void
+    {
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO bins (bin, created_at, expires_at) VALUES (:bin, :created_at, :expires_at)'
+        );
+
+        $stmt->execute([
+            ':bin' => $bin,
+            ':created_at' => time(),
+            ':expires_at' => time() + 86400  // + 24h 
+        ]);
+    }
+
     public function exists(string $bin): bool
     {
         $stmt = $this->pdo->prepare(
@@ -68,16 +82,18 @@ class Database
         return $stmt->fetch() !== false;
     }
 
-    public function insert(string $bin): void
+    public function expired(string $bin): bool
     {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO bins (bin, created_at) VALUES (:bin, :created_at)'
+            'SELECT 1 FROM bins WHERE bin = :bin AND expires_at < :now LIMIT 1'
         );
 
         $stmt->execute([
             ':bin' => $bin,
-            ':created_at' => time()
+            ':now' => time()
         ]);
+
+        return $stmt->fetch() !== false;
     }
 
     public function delete(string $bin): void
