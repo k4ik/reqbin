@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use App\DTO\CapturedRequest;
 use App\Services\BinService;
+use App\DTO\CapturedRequest;
 
 class BinController
 {
@@ -16,10 +16,8 @@ class BinController
 
     public function createBin(): array
     {
-        $bin = $this->service->createBin();
-
         return [
-            'bin' => $bin
+            'bin' => $this->service->createBin()
         ];
     }
 
@@ -29,8 +27,8 @@ class BinController
             http_response_code(404);
             return ['error' => 'Bin not found'];
         }
-        $id = $this->service->getBinId($bin);
-        return $this->service->getRequests($id);
+
+        return $this->service->getRequests($bin);
     }
 
     public function handleRequest(string $bin): array
@@ -41,7 +39,7 @@ class BinController
         }
 
         if ($this->service->isExpired($bin)) {
-            $this->service->deleteBin($bin);
+            $this->service->delete($bin);
 
             http_response_code(410);
             return ['error' => 'Bin expired'];

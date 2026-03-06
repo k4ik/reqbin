@@ -2,21 +2,73 @@
 
 namespace App\Services;
 
-use App\Database\Database;
+use App\Repositories\BinRepository;
+use App\Repositories\RequestRepository;
 use App\DTO\CapturedRequest;
 
 class BinService
 {
-    private Database $db;
+    private BinRepository $bins;
+    private RequestRepository $requests;
 
     public function __construct()
     {
-        $this->db = new Database();
+        $this->bins = new BinRepository();
+        $this->requests = new RequestRepository();
     }
 
-    public function generateBinId(int $length = 30): string
+    public function createBin(): string
+    {
+        do {
+            $bin = $this->generateId();
+        } while ($this->bins->exists($bin));
+
+        $this->bins->insert($bin, time() + 86400);
+
+        return $bin;
+    }
+
+    public function storeRequest(string $bin, CapturedRequest $request): void
+    {
+        $binId = $this->bins->getId($bin);
+
+        if ($binId === null) {
+            throw new \RuntimeException('Bin not found');
+        }
+
+        $this->requests->insert($binId, $request);
+    }
+
+    public function getRequests(string $bin): array
+    {
+        $id = $this->bins->getId($bin);
+
+        if ($id === null) {
+            throw new \RuntimeException('Bin not found');
+        }
+
+        return $this->requests->getByBin($id);
+    }
+
+    public function exists(string $bin): bool
+    {
+        return $this->bins->exists($bin);
+    }
+
+    public function isExpired(string $bin): bool
+    {
+        return $this->bins->expired($bin);
+    }
+
+    public function delete(string $bin): void
+    {
+        $this->bins->delete($bin);
+    }
+
+    private function generateId(int $length = 30): string
     {
         $chars = '23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
+
         $id = '';
 
         for ($i = 0; $i < $length; $i++) {
@@ -24,52 +76,5 @@ class BinService
         }
 
         return $id;
-    }
-
-    public function createBin(): string
-    {
-        do {
-            $bin = $this->generateBinId();
-        } while ($this->exists($bin));
-
-        $this->db->insert($bin);
-
-        return $bin;
-    }
-
-    public function storeRequest(string $bin, CapturedRequest $request): void
-    {
-        $binId = $this->db->getBinId($bin);
-
-        if ($binId === null) {
-            throw new \RuntimeException('Bin not found');
-        }
-
-        $this->db->insertRequest($binId, $request);
-    }
-
-    public function deleteBin(string $bin): void
-    {
-        $this->db->delete($bin);
-    }
-
-    public function exists(string $bin): bool
-    {
-        return $this->db->exists($bin);
-    }
-
-    public function getBinId(string $bin): ?int
-    {
-        return $this->db->getBinId($bin);
-    }
-
-    public function getRequests(int $id): array
-    {
-        return $this->db->getRequests($id);
-    }
-
-    public function isExpired(string $bin): bool
-    {
-        return $this->db->expired($bin);
     }
 }
