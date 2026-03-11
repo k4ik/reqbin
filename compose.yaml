@@ -13,3 +13,15 @@ services:
       DB_PATH: /var/www/storage/database.sqlite
     restart: unless-stopped
 
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: worker
+    command: php app/Workers/run-cleaner.php
+    volumes:
+      - .:/var/www
+      - /var/www/vendor
+    environment:
+      DB_PATH: /var/www/storage/database.sqlite
+    restart: unless-stopped

@@ -55,16 +55,6 @@ class BinService
         return $this->bins->exists($bin);
     }
 
-    public function isExpired(string $bin): bool
-    {
-        return $this->bins->expired($bin);
-    }
-
-    public function delete(string $bin): void
-    {
-        $this->bins->delete($bin);
-    }
-
     private function generateId(int $length = 30): string
     {
         $chars = '23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';

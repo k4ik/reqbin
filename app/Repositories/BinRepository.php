@@ -39,20 +39,15 @@ class BinRepository
         return $stmt->fetch() !== false;
     }
 
-    public function expired(string $bin): bool
+    public function deleteExpired(): void
     {
         $stmt = $this->pdo->prepare(
-            'SELECT 1 FROM bins
-             WHERE bin = :bin AND expires_at < :now
-             LIMIT 1'
+            'DELETE FROM bins WHERE expires_at < :now'
         );
 
         $stmt->execute([
-            ':bin' => $bin,
-            ':now' => time()
+            'now' => time()
         ]);
-
-        return $stmt->fetch() !== false;
     }
 
     public function delete(string $bin): void

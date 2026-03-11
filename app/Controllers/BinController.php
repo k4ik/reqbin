@@ -38,13 +38,6 @@ class BinController
             return ['error' => 'Bin not found'];
         }
 
-        if ($this->service->isExpired($bin)) {
-            $this->service->delete($bin);
-
-            http_response_code(410);
-            return ['error' => 'Bin expired'];
-        }
-
         $request = CapturedRequest::fromGlobals();
 
         $this->service->storeRequest($bin, $request);
