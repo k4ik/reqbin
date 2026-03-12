@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Workers;
+namespace App\Services;
 
 use App\Repositories\BinRepository;
 
@@ -16,7 +16,7 @@ class CleanerService
     public function run(): void
     {
         while (true) {
-            $this->bins->getExpireds();
+            $this->bins->deleteExpired();
             echo '[Cleaner] executed at ' . date('Y-m-d H:i:s') . PHP_EOL;
             sleep(1800);
         }
