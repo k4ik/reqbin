@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Headers: *");
 require __DIR__ . "/../vendor/autoload.php";
 
 use Phroute\Phroute\RouteCollector;
