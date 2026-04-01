@@ -1,13 +1,13 @@
 services:
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: backend
     ports:
       - "8000:8000"
     volumes:
-      - .:/var/www
+    - ./backend:/var/www
       - /var/www/vendor
     environment:
       DB_PATH: /var/www/storage/database.sqlite
@@ -15,12 +15,12 @@ services:
 
   worker:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: worker
     command: php app/Workers/run-cleaner.php
     volumes:
-      - .:/var/www
+    - ./backend:/var/www
       - /var/www/vendor
     environment:
       DB_PATH: /var/www/storage/database.sqlite
@@ -30,7 +30,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: frontend
     container_name: frontend
     ports:
       - "5173:80"
