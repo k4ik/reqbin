@@ -4,7 +4,7 @@
 
         <nav class="header__nav">
             <div class="nav__field" v-if="store.hasBin"
-                @click="clipboardStore.copy(`http://localhost:8000/bin/${store.bin}`)">
+                @click="copy(`http://localhost:8000/bin/${store.bin}`)">
                 <p class="field__endpoint">
                     bin/{{ store.bin }}
                 </p>
@@ -16,7 +16,7 @@
                         <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
                         <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
                     </svg>
-                    {{ clipboardStore.copied ? 'Copied!' : 'Copy URL' }}
+                    {{ copied ? 'Copied!' : 'Copy URL' }}
                 </button>
             </div>
 
@@ -31,11 +31,11 @@
 <script setup lang="ts">
 import BinButton from '@/components/Bin/Button.vue';
 import { useBinStore } from '@/stores/useBin';
-import { useClipboardStore } from '@/stores/useClipboard';
+import { useClipboard } from '@/composables/useClipboard';
 import Logo from '@/components/Header/Logo.vue';
 
 const store = useBinStore()
-const clipboardStore = useClipboardStore()
+const { copied, copy } = useClipboard()
 </script>
 
 <style scoped>
