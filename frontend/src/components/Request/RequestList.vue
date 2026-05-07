@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { useRequestStore } from '@/stores/useRequest'
 import { useBinStore } from '@/stores/useBin'
-import { useRequests } from '@/composables/useRequest'
 import { formatTime } from '@/helpers/formatTime'
 import { getMethodStyle } from '@/helpers/getMethodStyle'
 const requestStore = useRequestStore()
 const binStore = useBinStore()
-const { selectRequest } = useRequests()
 
 const handleSelect = (id: number) => {
-    selectRequest(id)
+    requestStore.selectRequest(id)
     emit('close')
 }
 

@@ -2,26 +2,25 @@
 import Header from '@/components/Header/Header.vue'
 import { useBinStore } from '@/stores/useBin'
 import { useRequestStore } from '@/stores/useRequest'
-import { useRequests } from '@/composables/useRequest'
 import { ref, watch } from 'vue'
-import { useTabsStore } from '@/stores/useTabs'
 import RequestDetails from './components/Request/RequestDetails.vue'
 import RequestList from './components/Request/RequestList.vue'
-const tabsStore = useTabsStore()
+import { useRequestSocket } from './composables/useWebsockets'
 const binStore = useBinStore()
 const requestStore = useRequestStore()
-const { startPolling, stopPolling } = useRequests()
+const { listenToBin, stopListening } = useRequestSocket()
 
 const isMenuOpen = ref(false)
 
 watch(
     () => binStore.bin,
-    (bin) => {
-        requestStore.reset()
-        tabsStore.reset()
-        
-        if (bin) startPolling()
-        else stopPolling()
+    (newBin, oldBin) => {
+        if (oldBin) stopListening(oldBin)
+
+        if (newBin) {
+            requestStore.reset()
+            listenToBin(newBin)
+        }
     },
     { immediate: true }
 )
@@ -35,6 +34,7 @@ watch(
         <RequestDetails />
     </main>
 </template>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
