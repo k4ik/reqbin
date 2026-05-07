@@ -1,3 +1,3 @@
-export function formatTime(ts: number) {
-    return new Date(ts * 1000).toLocaleString()
+export function formatTime(timestamp: number) {
+    return new Date(timestamp).toLocaleString()
 }
