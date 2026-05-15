@@ -1,16 +1,13 @@
 # Reqbin
 
-> Minimalist RequestBin clone with real-time request inspection powered by WebSockets.
+> Lightweight RequestBin clone focused on real-time request inspection, backend architecture, and self-hostable infrastructure.
 
-<!--
-![Reqbin Preview](./docs/banner.png)
--->
 
 ## Features
 
 - Generate temporary request endpoints
-- Inspect incoming HTTP requests in real-time
-- WebSocket-powered live updates
+- Real-time request inspection powered by WebSockets
+- Live request synchronization without polling
 - Request detail inspection:
   - Headers
   - Body
@@ -18,44 +15,60 @@
   - HTTP method
 - Persistent request history
 - Automatic bin expiration after 24 hours
+- Redis-backed rate limiting
+- Middleware-based security layer
 - Self-hostable architecture
-- Lightweight and minimal setup
+- Lightweight containerized setup
 
-## Tech Stack
+---
 
-### Frontend
+# Tech Stack
+
+## Frontend
+
 - Vue 3
 - TypeScript
 - Pinia
-
-### Backend
-- PHP
-- SQLite
-
-### Realtime
-- Soketi
 - Laravel Echo
 
-### Infrastructure
-- Podman
+## Backend
+
+- PHP 8.3
+- SQLite
+- Redis
+
+## Realtime
+
+- Soketi
+- WebSockets
+- Pusher Protocol
+
+## Infrastructure
+
+- Podman / Docker
 - Nginx
+- Multi-container architecture
 
-## Installation
+---
 
-### Prerequisites
+# Installation
 
-- Docker or Podman
+## Prerequisites
 
-## Running Locally
+- Podman or Docker
 
-### Clone the repository
+---
+
+# Running Locally
+
+## Clone repository
 
 ```bash
 git clone https://github.com/k4ik/reqbin.git
 cd reqbin
 ```
 
-### Start containers
+## Start containers
 
 ```bash
 podman compose up -d --build
@@ -67,22 +80,57 @@ or
 docker compose up -d --build
 ```
 
-## Architecture
+---
 
-Reqbin follows a lightweight layered architecture:
+# Architecture
+
+Reqbin follows a lightweight layered backend architecture inspired by modern backend frameworks.
+
+## Backend Layers
 
 - Controllers handle HTTP requests
 - Services contain business logic
 - Repositories manage persistence
-- DTOs standardize captured request data
+- DTOs standardize request data
 - Workers handle background cleanup tasks
+- Middleware handles request processing and security
 
-### Realtime Flow
+## Middleware System
+
+Reqbin includes a custom middleware pipeline responsible for:
+
+- Rate limiting
+- Security headers
+- CORS handling
+- Request validation
+- Payload protection
+
+## Infrastructure Components
+
+```txt
+Vue Frontend
+      ↓
+Nginx Container
+      ↓
+PHP API
+      ↓
+Redis (rate limiting)
+      ↓
+SQLite Persistence
+      ↓
+Soketi WebSocket Server
+```
+
+---
+
+# Realtime Flow
 
 ```txt
 Incoming Request
         ↓
 PHP Backend
+        ↓
+Middleware Pipeline
         ↓
 SQLite Persistence
         ↓
@@ -91,15 +139,18 @@ Soketi Broadcast
 Vue Frontend Sync
 ```
 
-## Project Structure
+---
+
+# Project Structure
 
 ```txt
 .
 ├── backend/
 │   ├── app/
 │   │   ├── Controllers/
-│   │   ├── Database/
+│   │   ├── Core/
 │   │   ├── DTO/
+│   │   ├── Middlewares/
 │   │   ├── Repositories/
 │   │   ├── Services/
 │   │   └── Workers/
@@ -118,16 +169,34 @@ Vue Frontend Sync
 └── README.md
 ```
 
-## How It Works
+---
 
-1. Create a new temporary bin
+# Security Features
+
+Reqbin implements several API protection mechanisms:
+
+- Redis-backed IP rate limiting
+- Middleware-based request validation
+- Security headers
+- CORS handling
+- Payload size protection
+- Randomized bin identifiers
+- Centralized error handling
+
+---
+
+# How It Works
+
+1. Create a temporary bin
 2. Send requests to the generated endpoint
 3. Reqbin captures and stores the request
-4. Incoming requests are broadcast through WebSockets
-5. The frontend updates in real-time
-6. Expired bins are automatically cleaned after 24 hours
+4. Requests are broadcast through WebSockets
+5. Frontend updates in real-time
+6. Background workers clean expired bins
 
-## Example Request
+---
+
+# Example Request
 
 ```bash
 curl -X POST http://localhost:8000/bin/:bin \
@@ -135,38 +204,41 @@ curl -X POST http://localhost:8000/bin/:bin \
   -d '{"message":"hello world"}'
 ```
 
-<!--
-## 📸 Screenshots
+---
 
-### Dashboard
-![Dashboard](./docs/dashboard.png)
+# Screenshots
+![Reqbin Preview](./docs/preview.png)
 
-### Request Details
-![Request Details](./docs/request-details.png)
--->
-
-## Project Goals
+# Project Goals
 
 Reqbin was built to explore:
 
-- Real-time communication using WebSockets
+- WebSocket communication
 - Request inspection systems
-- Lightweight backend architecture
-- Fullstack application design
+- Backend architecture patterns
+- Middleware pipelines
+- Rate limiting strategies
+- Containerized infrastructure
 - Self-hostable developer tooling
+- Real-time fullstack systems
 
-## Roadmap
+---
+
+# Roadmap
 
 - [x] Real-time request updates
 - [x] Request storage
 - [x] Request detail viewer
 - [x] Automatic bin expiration
-- [ ] Rate limiting
+- [x] Redis-backed rate limiting
+- [x] Middleware pipeline
+- [x] Security improvements
+- [x] Better UI/UX
 - [ ] Request filtering
-- [ ] Security improvements
-- [ ] Better UI/UX
+- [ ] Request search
+---
 
-## Contributing
+# Contributing
 
 Contributions, issues, and feature requests are welcome.
 
@@ -176,6 +248,8 @@ Contributions, issues, and feature requests are welcome.
 4. Push your branch
 5. Open a Pull Request
 
-## License
+---
+
+# License
 
 This project is licensed under the MIT License.
