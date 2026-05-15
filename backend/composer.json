@@ -1,7 +1,8 @@
 {
     "require": {
         "phroute/phroute": "^2.2",
-        "pusher/pusher-php-server": "^7.2"
+        "pusher/pusher-php-server": "^7.2",
+        "predis/predis": "^3.4"
     },
     "autoload": {
         "psr-4": {
