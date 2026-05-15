@@ -6,7 +6,7 @@ import { useRequestStore } from '@/stores/useRequest'
 
 const echo = new Echo({
     broadcaster: 'pusher',
-    key: 'e79c5aff8362a28faddc6751086dbceb',
+    key: import.meta.env.VITE_SOKETI_APP_KEY,
     cluster: 'mt1',
     wsHost: window.location.hostname,
     wsPort: 6001,

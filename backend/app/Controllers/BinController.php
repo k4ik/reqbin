@@ -50,7 +50,7 @@ class BinController
             'scheme' => 'http'
         ];
 
-        $pusher = new Pusher('e79c5aff8362a28faddc6751086dbceb', 'dc98aabf44bf6711d4900a7a0df06cddd748b089eb9a4778cc165409b5615f0f', '3932a5aa-ee88-4bc5-a966-4952d9c22b86', $options);
+        $pusher = new Pusher(getenv('SOKETI_DEFAULT_APP_KEY'), getenv('SOKETI_DEFAULT_APP_SECRET'), getenv('SOKETI_DEFAULT_APP_ID'), $options);
         
         $pusher->trigger("bin-$bin", 'request.received', $request->toArray());
 
