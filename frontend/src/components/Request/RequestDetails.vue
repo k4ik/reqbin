@@ -16,7 +16,7 @@ const tabsStore = useTabsStore()
                 <span class="method"
                     :style="{ color: getMethodStyle(requestStore.request.method).color, backgroundColor: getMethodStyle(requestStore.request.method).background }">{{
                         requestStore.request.method }}</span>
-                <span class="endpoint">/bin/{{ binStore.bin }}</span>
+                <span class="endpoint">{{ `/bin/${binStore.bin}` }}</span>
             </div>
 
             <div class="details__meta">
@@ -60,107 +60,174 @@ const tabsStore = useTabsStore()
 
 <style scoped>
 .details {
-    width: 65%;
+    flex: 1;
+    min-width: 0;
+
     margin-top: var(--header-height);
-    height: calc(100vh - var(--header-height));
-    padding-top: 0;
+
+    height: calc(100dvh - var(--header-height));
+
     display: flex;
     flex-direction: column;
-    background-color: #f9fafb;
+
+    overflow: hidden;
 }
 
 .details__header {
-    padding: 1em;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 2rem 1.5rem;
+
+    border-bottom: 1px solid var(--border);
 }
 
 .details__top {
     display: flex;
     align-items: center;
-    gap: 0.5em;
+    gap: 0.7rem;
+    min-width: 0;
+    width: 100%;
+}
+
+.method {
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    padding: 0.4rem 0.8rem;
+
+    border-radius: 999px;
+}
+
+.endpoint {
+    font-size: 0.92rem;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
 }
 
 .details__meta {
-    margin-top: 0.5em;
-    font-size: 0.8em;
-    color: #666;
+    margin-top: 0.8rem;
+
     display: flex;
-    gap: 1em;
     flex-wrap: wrap;
+    gap: 1rem;
+
+    font-size: 0.76rem;
+
+    color: var(--muted);
 }
 
 .details__tabs {
     display: flex;
-    gap: 1em;
-    padding: 0.5em 1em;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    gap: 0.4rem;
+
+    padding: 0.8rem 1.5rem;
+
+    border-bottom: 1px solid var(--border);
 }
 
 .details__tabs button {
-    background: none;
     border: none;
-    font-size: 0.9em;
-    cursor: pointer;
-    padding-bottom: 0.3em;
+
+    background: transparent;
+
+    color: var(--muted);
+
+    padding: 0.55rem 0.8rem;
+
+    border-radius: 0.45rem;
+
+    font-size: 0.8rem;
 }
 
 .details__tabs button.active {
-    border-bottom: 2px solid black;
-    font-weight: 600;
+    background: rgba(124, 92, 255, 0.14);
+
+    color: var(--primary);
 }
 
 .details__content {
-    padding: 1em;
-    overflow-y: auto;
-}
+    flex: 1;
 
-.method {
-    font-weight: 600;
-    font-size: 0.95em;
-    padding: 0.4em 0.9em;
-    border-radius: 0.5em;
+    overflow-y: auto;
+
+    padding: 1.5rem;
 }
 
 .details__content pre {
-    background-color: #0f172a;
-    color: #e2e8f0;
-    padding: 1em;
-    border-radius: 0.5em;
-    font-size: 0.8em;
+    background:
+        linear-gradient(180deg,
+            rgba(255, 255, 255, 0.02),
+            transparent),
+        #0d1325;
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+    color: #dbe7ff;
+
+    padding: 1.2rem;
+
+    border-radius: 0.6rem;
+
     overflow-x: auto;
+
+    line-height: 1.6;
+
+    font-size: 0.8rem;
 }
 
 .kv {
     display: flex;
     justify-content: space-between;
-    padding: 0.5em;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    font-size: 0.85em;
+    gap: 1rem;
+
+    padding: 1rem 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .kv__key {
-    font-weight: 500;
-    color: #111;
+    font-size: 0.82rem;
+    color: var(--text);
 }
 
 .kv__value {
-    color: #555;
+    font-size: 0.8rem;
+
+    color: var(--muted);
+
+    text-align: right;
+
     word-break: break-all;
-    overflow-wrap: anywhere;
 }
 
 @media (max-width: 1024px) {
     .details {
-        width: 100%;
-        padding-top: 0;
+        height: auto;
+        min-height: calc(100dvh - var(--header-height));
+
+        overflow: visible;
+    }
+
+    .details__content {
+        overflow-y: visible;
     }
 }
 
 @media (max-width: 768px) {
-    .endpoint {
-        font-size: 1em;
-        word-break: break-all;
+    .details__content {
+        padding: 1rem;
+    }
+
+    .kv {
+        flex-direction: column;
+    }
+
+    .kv__value {
+        text-align: left;
     }
 }
 </style>

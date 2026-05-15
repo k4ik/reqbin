@@ -30,7 +30,7 @@ const emit = defineEmits<{
                 <p>{{ requestStore.requests.length }} captured</p>
             </div>
 
-            <div v-if="requestStore.requests.length">
+            <div v-if="requestStore.requests.length" class="requests__display">
                 <div class="request" v-for="item in requestStore.requests" :key="item.id" @click="handleSelect(item.id)"
                     :class="{ active: requestStore.request?.id === item.id }">
                     <div class="request_data">
@@ -38,7 +38,7 @@ const emit = defineEmits<{
                             :style="{ color: getMethodStyle(item.method).color, backgroundColor: getMethodStyle(item.method).background }">{{
                                 item.method }}</span>
                         <span class="endpoint">
-                            /bin/{{ binStore.bin }}
+                            {{ `/bin/${binStore.bin}` }}
                         </span>
                     </div>
 
@@ -54,93 +54,163 @@ const emit = defineEmits<{
 
 <style scoped>
 .requests {
-    width: 35%;
-    height: auto;
-    overflow-y: auto;
-    border-right: 1px solid rgba(0, 0, 0, 0.164);
-    scrollbar-width: thin;
-    scrollbar-color: rgb(230, 228, 228) #ffffff;
+    width: 34%;
+    min-width: 360px;
+
+    border-right: 1px solid var(--border);
+
     position: relative;
+
+    height: 100dvh;
+    overflow: hidden;
 }
 
 .requests__panel {
+    height: 100dvh;
+
     padding-top: var(--header-height);
-    height: 100vh;
-    background: white;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+
+    background: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(14px);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
 }
 
 .head {
-    padding: 1em;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.164);
+    padding: 2em 1rem;
+
+    background: rgba(15, 23, 42, 0.92);
+
+    border-bottom: 1px solid var(--border);
+
+    z-index: 10;
+
+    flex-shrink: 0;
+}
+
+.requests__display {
+    flex: 1;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    min-height: 0;
+
+    scrollbar-gutter: stable;
 }
 
 .head h1 {
-    font-size: 1.1em;
+    font-size: 0.95rem;
 }
 
 .head p {
-    font-size: 0.8em;
-    color: rgb(88, 88, 88);
+    color: var(--muted);
+
+    font-size: 0.75rem;
 }
 
 .request {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-    padding: 1em;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.164);
+    position: relative;
+
+    padding: 0.85rem 1rem;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+
     cursor: pointer;
+
     transition: background 0.2s ease;
+}
+
+.request:hover {
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.request.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+
+    width: 3px;
+
+    border-radius: 999px;
+
+    background: var(--primary);
 }
 
 .request_data {
     display: flex;
     align-items: center;
-    gap: 0.5em;
+    gap: 0.6rem;
+    width: 100%;
+    min-width: 0;
 }
 
 .request_details {
+    margin-top: 0.55rem;
+
     display: flex;
-    align-items: center;
     justify-content: space-between;
+
+    font-size: 0.74rem;
+
+    color: var(--muted);
 }
 
 .method {
-    font-weight: 600;
-    font-size: 0.75em;
-    padding: 0.4em 0.9em;
-    border-radius: 0.5em;
+    font-size: 0.68rem;
+    font-weight: 700;
+
+    padding: 0.35rem 0.7rem;
+
+    border-radius: 999px;
 }
 
-.endpoint,
-.ip,
-.created_at {
-    font-size: 0.8em;
-    color: rgb(88, 88, 88);
+.endpoint {
+    font-size: 0.83rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
 }
 
-.request.active {
-    background-color: #f1f5f9;
-    border-left: 3px solid #0f172a;
+.overlay {
+    display: none;
 }
 
 @media (max-width: 1024px) {
-
     .requests {
-        width: 100%;
-        max-width: none;
+        width: 0;
+        min-width: 0;
+
+        border-right: none;
+
+        overflow: visible;
     }
 
     .requests__panel {
         position: fixed;
+
+        width: min(420px, 100%);
+        height: 100vh;
+
         left: 0;
-        z-index: 100;
+        top: 0;
+
         transform: translateX(-100%);
+
+        transition: transform 0.3s ease;
+
+        z-index: 100;
+
+        border-radius: 0 1rem 1rem 0;
     }
 
     .requests.open .requests__panel {
@@ -148,28 +218,24 @@ const emit = defineEmits<{
     }
 
     .overlay {
+        display: block;
+
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 99;
+
+        background: rgba(0, 0, 0, 0.5);
+
         opacity: 0;
         pointer-events: none;
+
         transition: opacity 0.3s ease;
+
+        z-index: 99;
     }
 
     .requests.open .overlay {
         opacity: 1;
         pointer-events: all;
-    }
-}
- 
-@media (max-width: 425px) {
-    .requests__panel {
-        max-width: 100%;
-    }
-
-    .endpoint {
-        word-break: break-all;
     }
 }
 </style>
