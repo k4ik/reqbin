@@ -1,19 +1,19 @@
 <?php
-declare(strict_types=1);
-header('Content-Type: application/json');
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
-require __DIR__ . "/../vendor/autoload.php";
+require __DIR__ . '/../vendor/autoload.php';
 
+use App\Core\Request;
+use App\Core\Pipeline;
+use App\Core\Response;
+use App\Middlewares\CorsMiddleware;
+use App\Middlewares\RateLimitMiddleware;
+use App\Middlewares\SecurityHeadersMiddleware;
+use App\Services\BinService;
+use App\Controllers\BinController;
 use Phroute\Phroute\RouteCollector;
 use Phroute\Phroute\Dispatcher;
-use App\Controllers\BinController;
-use App\Services\BinService;
 
-$path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-
-$router = new RouteCollector;
-
+$request = new Request();
+$router = new RouteCollector();
 $service = new BinService();
 $controller = new BinController($service);
 
@@ -31,10 +31,34 @@ $router->get("/bin/{id}/requests", function($id) use ($controller) {
 
 $dispatcher = new Dispatcher($router->getData());
 
+$pipeline = new Pipeline();
+
+$pipeline->pipe(new CorsMiddleware());
+$pipeline->pipe(new SecurityHeadersMiddleware());
+$pipeline->pipe(new RateLimitMiddleware());
+
 try {
-    $response = $dispatcher->dispatch($_SERVER["REQUEST_METHOD"], $path);
-    echo json_encode($response);
+    $pipeline->process(
+        [
+            'method' => $request->method,
+            'path' => $request->path,
+            'ip' => $request->ip,
+            'headers' => $request->headers,
+            'body' => $request->body,
+        ],
+        function ($request) use ($dispatcher) {
+
+            $response = $dispatcher->dispatch(
+                $request['method'],
+                $request['path']
+            );
+
+            Response::json($response);
+        }
+    );
+
 } catch (Throwable $e) {
-    http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    Response::json([
+        'error' => 'Internal server error'
+    ], 500);
 }
