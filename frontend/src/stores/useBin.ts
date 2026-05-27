@@ -1,18 +1,19 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import * as binService from '@/services/bin'
 
 export const useBinStore = defineStore('bin', () => {
-  const bin = ref<string | null>(null);
+  const bin = ref<string | null>(null)
+  const hasBin = computed(() => !!bin.value)
 
-  const hasBin = computed(() => !!bin.value);
-
-  const setBin = (value: string) => {
-    bin.value = value;
+  async function createBin() {
+    bin.value = await binService.createBin()
   }
 
   return {
     bin,
-    setBin,
-    hasBin
+    hasBin,
+
+    createBin
   }
 })

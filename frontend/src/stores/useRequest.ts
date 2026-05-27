@@ -1,74 +1,118 @@
-import { defineStore } from "pinia"
-import { ref } from "vue"
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+
 import type { ApiRequest } from '@/types/request'
 
-export const useRequestStore = defineStore('request', () => {
-    const requests = ref<ApiRequest[]>([])
-    const request = ref<ApiRequest | null>(null)
+import {
+    listenToBin,
+    stopListeningToBin,
+} from '@/services/socket/socket'
 
-    const addRequest = (data: ApiRequest) => {
-        const normalized = normalizeRequest(data)
+export const useRequestStore = defineStore(
+    'request',
+    () => {
+        const requests = ref<ApiRequest[]>([])
+        const selectedRequest = ref<ApiRequest | null>(null)
 
-        if (requests.value.find(r => r.id === normalized.id)) return
-
-        requests.value.unshift(normalized)
-    }
-
-    const selectRequest = (id: number) => {
-        const req = requests.value.find(r => r.id === id)
-
-        if (req) {
-            request.value = req
+        function connectToBin(bin: string): void {
+            listenToBin(bin, (data) => {
+                addRequest(data)
+            })
         }
-    }
 
-    const reset = () => {
-        requests.value = []
-        request.value = null
-    }
+        function disconnectFromBin(bin: string): void {
+            stopListeningToBin(bin)
+        }
 
-    function normalizeRequest(req: any): ApiRequest {
-        const created_at = normalizeTimestamp(req)
+        function addRequest(data: ApiRequest): void {
+            const normalizedRequest = normalizeRequest(data)
+
+            const alreadyExists = requests.value.some(
+                (request) => request.id === normalizedRequest.id
+            )
+
+            if (alreadyExists) return
+
+            requests.value.unshift(normalizedRequest)
+        }
+
+        function selectRequest(id: number): void {
+            selectedRequest.value =
+                requests.value.find(
+                    (request) => request.id === id
+                ) ?? null
+        }
+
+        function reset(): void {
+            requests.value = []
+            selectedRequest.value = null
+        }
+
+        function normalizeRequest(
+            request: any
+        ): ApiRequest {
+            const createdAt = normalizeTimestamp(request)
+
+            return {
+                ...request,
+
+                id:
+                    request.id ??
+                    `${createdAt}-${Math.random()}`,
+
+                created_at: createdAt,
+
+                headers: safeParse(request.headers),
+
+                query_params: normalizeQueryParams(
+                    request.query_params
+                ),
+
+                body:
+                    safeParse(request.body) ??
+                    request.body,
+            }
+        }
+
+        function normalizeTimestamp(
+            request: any
+        ): number {
+            if (request.timestamp) {
+                return Number(request.timestamp) * 1000
+            }
+
+            return Date.now()
+        }
+
+        function normalizeQueryParams(value: any) {
+            if (Array.isArray(value)) {
+                return {}
+            }
+
+            return safeParse(value)
+        }
+
+        function safeParse(value: any) {
+            try {
+                return typeof value === 'string'
+                    ? JSON.parse(value)
+                    : value
+            } catch {
+                return value
+            }
+        }
 
         return {
-            ...req,
+            selectedRequest,
+            requests,
 
-            created_at,
+            connectToBin,
+            disconnectFromBin,
 
-            id: req.id ?? `${created_at}-${Math.random()}`,
+            addRequest,
+            selectRequest,
 
-            headers: safeParse(req.headers),
-            query_params: normalizeQueryParams(req.query_params),
-            body: safeParse(req.body) ?? req.body,
+            reset,
         }
     }
-
-    function normalizeTimestamp(req: any): number {
-        if (req.timestamp) {
-            return Number(req.timestamp) * 1000
-        }
-
-        return Date.now()
-    }
-
-    function normalizeQueryParams(value: any) {
-        if (Array.isArray(value)) return {}
-        return safeParse(value)
-    }
-
-    function safeParse(value: any) {
-        try {
-            return typeof value === 'string' ? JSON.parse(value) : value
-        } catch {
-            return value
-        }
-    }
-
-    return {
-        request,
-        requests,
-        addRequest,
-        selectRequest,
-        reset,
-    }
-})
+)

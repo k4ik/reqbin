@@ -10,18 +10,18 @@ const tabsStore = useTabsStore()
 </script>
 
 <template>
-    <section class="details" v-if="requestStore.request">
+    <section class="details" v-if="requestStore.selectedRequest">
         <div class="details__header">
             <div class="details__top">
                 <span class="method"
-                    :style="{ color: getMethodStyle(requestStore.request.method).color, backgroundColor: getMethodStyle(requestStore.request.method).background }">{{
-                        requestStore.request.method }}</span>
+                    :style="{ color: getMethodStyle(requestStore.selectedRequest.method).color, backgroundColor: getMethodStyle(requestStore.selectedRequest.method).background }">{{
+                        requestStore.selectedRequest.method }}</span>
                 <span class="endpoint">{{ `/bin/${binStore.bin}` }}</span>
             </div>
 
             <div class="details__meta">
-                <span>IP: {{ requestStore.request.ip }}</span>
-                <span>Time: {{ formatTime(requestStore.request.created_at) }}</span>
+                <span>IP: {{ requestStore.selectedRequest.ip }}</span>
+                <span>Time: {{ formatTime(requestStore.selectedRequest.created_at) }}</span>
             </div>
         </div>
 
@@ -35,19 +35,19 @@ const tabsStore = useTabsStore()
 
         <div class="details__content">
             <div v-if="tabsStore.activeTab === 'headers'">
-                <div v-for="(value, key) in requestStore.request.headers" :key="key" class="kv">
+                <div v-for="(value, key) in requestStore.selectedRequest.headers" :key="key" class="kv">
                     <span class="kv__key">{{ key }}</span>
                     <span class="kv__value">{{ value }}</span>
                 </div>
             </div>
 
             <pre v-else-if="tabsStore.activeTab === 'body'">
-{{ requestStore.request.body || 'Empty body' }}
+{{ requestStore.selectedRequest.body || 'Empty body' }}
             </pre>
 
             <div v-else>
-                <div v-if="Object.keys(requestStore.request.query_params || {}).length">
-                    <div v-for="(value, key) in requestStore.request.query_params" :key="key" class="kv">
+                <div v-if="Object.keys(requestStore.selectedRequest.query_params || {}).length">
+                    <div v-for="(value, key) in requestStore.selectedRequest.query_params" :key="key" class="kv">
                         <span class="kv__key">{{ key }}</span>
                         <span class="kv__value">{{ value }}</span>
                     </div>

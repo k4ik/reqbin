@@ -1,5 +1,5 @@
 <template>
-    <button @click.prevent="createBin">
+    <button @click.prevent="binStore.createBin()">
         <svg xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { useBin } from '@/composables/useBin'
-const { createBin } = useBin()
+import { useBinStore } from '@/stores/useBin';
+const binStore = useBinStore()
 </script>
 
 <style scoped>

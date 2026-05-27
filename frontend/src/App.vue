@@ -5,22 +5,23 @@ import { useRequestStore } from '@/stores/useRequest'
 import { ref, watch } from 'vue'
 import RequestDetails from './components/Request/RequestDetails.vue'
 import RequestList from './components/Request/RequestList.vue'
-import { useRequestSocket } from './composables/useWebsockets'
 
 const binStore = useBinStore()
 const requestStore = useRequestStore()
-const { listenToBin, stopListening } = useRequestSocket()
 
 const isMenuOpen = ref(false)
 
 watch(
     () => binStore.bin,
     (newBin, oldBin) => {
-        if (oldBin) stopListening(oldBin)
+        if (oldBin) {
+            requestStore.disconnectFromBin(oldBin)
+        }
 
         if (newBin) {
             requestStore.reset()
-            listenToBin(newBin)
+
+            requestStore.connectToBin(newBin)
         }
     },
     { immediate: true }

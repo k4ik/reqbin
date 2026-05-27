@@ -1,20 +1,26 @@
-import { defineStore } from "pinia"
-import { ref } from "vue"
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const useTabsStore = defineStore('tabs', () => {
-    const activeTab = ref<'headers' | 'body' | 'query'>('headers')
+type Tab = 'headers' | 'body' | 'query'
 
-    const setTab = (tab: typeof activeTab.value) => {
-        activeTab.value = tab
+export const useTabsStore = defineStore(
+    'tabs',
+    () => {
+        const activeTab = ref<Tab>('headers')
+
+        function setTab(tab: Tab): void {
+            activeTab.value = tab
+        }
+
+        function reset(): void {
+            activeTab.value = 'headers'
+        }
+
+        return {
+            activeTab,
+
+            setTab,
+            reset,
+        }
     }
-
-    const reset = () => {
-        activeTab.value = 'headers'
-    }
-
-    return {
-        activeTab,
-        setTab,
-        reset
-    }
-})
+)

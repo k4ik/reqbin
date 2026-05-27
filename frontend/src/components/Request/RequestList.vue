@@ -32,7 +32,7 @@ const emit = defineEmits<{
 
             <div v-if="requestStore.requests.length" class="requests__display">
                 <div class="request" v-for="item in requestStore.requests" :key="item.id" @click="handleSelect(item.id)"
-                    :class="{ active: requestStore.request?.id === item.id }">
+                    :class="{ active: requestStore.selectedRequest?.id === item.id }">
                     <div class="request_data">
                         <span class="method"
                             :style="{ color: getMethodStyle(item.method).color, backgroundColor: getMethodStyle(item.method).background }">{{
