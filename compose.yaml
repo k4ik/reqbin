@@ -8,14 +8,15 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/var/www
-      - /var/www/vendor
+      - backend_vendor:/var/www/vendor
     environment:
-      DB_PATH: /var/www/storage/database.sqlite
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      SOKETI_DEFAULT_APP_ID: 3932a5aa-ee88-4bc5-a966-4952d9c22b86
-      SOKETI_DEFAULT_APP_KEY: e79c5aff8362a28faddc6751086dbceb
-      SOKETI_DEFAULT_APP_SECRET: dc98aabf44bf6711d4900a7a0df06cddd748b089eb9a4778cc165409b5615f0f
+      DB_PATH: ${DB_PATH}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
+      SOKETI_DEFAULT_APP_ID: ${SOKETI_DEFAULT_APP_ID}
+      SOKETI_DEFAULT_APP_KEY: ${SOKETI_DEFAULT_APP_KEY}
+      SOKETI_DEFAULT_APP_SECRET: ${SOKETI_DEFAULT_APP_SECRET}
     depends_on:
       - redis
     restart: unless-stopped
@@ -28,11 +29,11 @@ services:
     command: php app/Workers/run-cleaner.php
     volumes:
       - ./backend:/var/www
-      - /var/www/vendor
+      - backend_vendor:/var/www/vendor
     environment:
-      DB_PATH: /var/www/storage/database.sqlite
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      DB_PATH: ${DB_PATH}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
     depends_on:
       - redis
     restart: unless-stopped
@@ -42,8 +43,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_SOKETI_APP_KEY: e79c5aff8362a28faddc6751086dbceb
-        VITE_API_URL: http://localhost:8000
+        VITE_SOKETI_APP_KEY: ${VITE_SOKETI_APP_KEY}
+        VITE_API_URL: ${VITE_API_URL}
     container_name: frontend
     ports:
       - "5173:80"
@@ -62,10 +63,13 @@ services:
     image: quay.io/soketi/soketi:latest-16-alpine
     container_name: soketi
     environment:
-      SOKETI_DEBUG: 1
-      SOKETI_DEFAULT_APP_ID: 3932a5aa-ee88-4bc5-a966-4952d9c22b86
-      SOKETI_DEFAULT_APP_KEY: e79c5aff8362a28faddc6751086dbceb
-      SOKETI_DEFAULT_APP_SECRET: dc98aabf44bf6711d4900a7a0df06cddd748b089eb9a4778cc165409b5615f0f
+      SOKETI_DEBUG: 0
+      SOKETI_DEFAULT_APP_ID: ${SOKETI_DEFAULT_APP_ID}
+      SOKETI_DEFAULT_APP_KEY: ${SOKETI_DEFAULT_APP_KEY}
+      SOKETI_DEFAULT_APP_SECRET: ${SOKETI_DEFAULT_APP_SECRET}
     ports:
       - "6001:6001"
       - "9601:9601"
+
+volumes:
+  backend_vendor:
