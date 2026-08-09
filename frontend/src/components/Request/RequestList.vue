@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { useRequestStore } from '@/stores/useRequest'
 import { useBinStore } from '@/stores/useBin'
+import { useTabsStore } from '@/stores/useTabs'
 import { formatTime } from '@/helpers/formatTime'
 import { getMethodStyle } from '@/helpers/getMethodStyle'
 const requestStore = useRequestStore()
 const binStore = useBinStore()
+const tabsStore = useTabsStore()
 
 const handleSelect = (id: number) => {
     requestStore.selectRequest(id)
+    tabsStore.reset()
     emit('close')
 }
 
