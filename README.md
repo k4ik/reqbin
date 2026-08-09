@@ -11,7 +11,7 @@
 
 <br />
 
-<video src="/preview/file.mp4" autoplay loop muted playsinline width="100%"></video>
+<!--<video src="/preview/file.mp4" autoplay loop muted playsinline width="100%"></video>-->
 
 </div>
 
@@ -53,7 +53,7 @@
 
 ### Quickstart
 ```Bash
-git clone [https://github.com/k4ik/reqbin.git](https://github.com/k4ik/reqbin.git)
+git clone https://github.com/k4ik/reqbin.git
 cd reqbin
 podman compose up -d --build
 ```
