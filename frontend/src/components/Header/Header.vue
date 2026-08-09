@@ -8,8 +8,6 @@
                 v-if="store.hasBin"
                 @click="copy(`http://localhost:8000/bin/${store.bin}`)"
             >
-                <div class="live-dot"></div>
-
                 <p class="field__endpoint">
                     /bin/{{ store.bin }}
                 </p>
@@ -120,33 +118,6 @@ const { copied, copy } = useClipboard()
     height: 0.9rem;
 }
 
-.live-dot {
-    width: 8px;
-    height: 8px;
-
-    border-radius: 999px;
-
-    background: var(--success);
-
-    animation: pulse 1.6s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        opacity: 0.4;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.3);
-    }
-
-    100% {
-        opacity: 0.4;
-        transform: scale(1);
-    }
-}
 
 .menu-btn {
     display: none;
