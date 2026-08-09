@@ -7,16 +7,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/var/www
+      - ./backend:/var/www:Z
       - backend_vendor:/var/www/vendor
-    environment:
-      DB_PATH: ${DB_PATH}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-
-      SOKETI_DEFAULT_APP_ID: ${SOKETI_DEFAULT_APP_ID}
-      SOKETI_DEFAULT_APP_KEY: ${SOKETI_DEFAULT_APP_KEY}
-      SOKETI_DEFAULT_APP_SECRET: ${SOKETI_DEFAULT_APP_SECRET}
+    env_file:
+      - ./backend/.env
     depends_on:
       - redis
     restart: unless-stopped
@@ -28,12 +22,10 @@ services:
     container_name: worker
     command: php app/Workers/run-cleaner.php
     volumes:
-      - ./backend:/var/www
-      - backend_vendor:/var/www/vendor
-    environment:
-      DB_PATH: ${DB_PATH}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
+    - ./backend:/var/www:Z
+    - backend_vendor:/var/www/vendor
+    env_file:
+      - ./backend/.env
     depends_on:
       - redis
     restart: unless-stopped
@@ -42,9 +34,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        VITE_SOKETI_APP_KEY: ${VITE_SOKETI_APP_KEY}
-        VITE_API_URL: ${VITE_API_URL}
+    env_file:
+      - ./frontend/.env
     container_name: frontend
     ports:
       - "5173:80"
@@ -62,14 +53,12 @@ services:
   soketi:
     image: quay.io/soketi/soketi:latest-16-alpine
     container_name: soketi
-    environment:
-      SOKETI_DEBUG: 0
-      SOKETI_DEFAULT_APP_ID: ${SOKETI_DEFAULT_APP_ID}
-      SOKETI_DEFAULT_APP_KEY: ${SOKETI_DEFAULT_APP_KEY}
-      SOKETI_DEFAULT_APP_SECRET: ${SOKETI_DEFAULT_APP_SECRET}
+    env_file:
+      - ./backend/.env
     ports:
       - "6001:6001"
       - "9601:9601"
+    restart: unless-stopped
 
 volumes:
   backend_vendor:
