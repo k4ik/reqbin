@@ -8,12 +8,6 @@ RUN npm install -g pnpm && pnpm install
 
 COPY . .
 
-ARG VITE_SOKETI_APP_KEY
-ARG VITE_API_URL
-
-ENV VITE_SOKETI_APP_KEY=$VITE_SOKETI_APP_KEY
-ENV VITE_API_URL=$VITE_API_URL
-
 RUN pnpm build
 
 FROM docker.io/nginx:alpine
