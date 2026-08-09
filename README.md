@@ -11,7 +11,7 @@
 
 <br />
 
-<video src="./preview/file.mp4" autoplay loop muted playsinline width="100%"></video>
+<video src="/preview/file.mp4" autoplay loop muted playsinline width="100%"></video>
 
 </div>
 
