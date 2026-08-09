@@ -2,9 +2,13 @@ name: Tests
 
 on:
   push:
-    branches: [ main, master ] 
+    paths:
+      - 'backend/**'
+      - '.github/workflows/tests.yml'
   pull_request:
-    branches: [ main, master ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/tests.yml'
 
 jobs:
   pest-tests:
@@ -22,9 +26,9 @@ jobs:
           coverage: none
 
       - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
         working-directory: ./backend
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run Pest Tests
-        run: ./vendor/bin/pest
         working-directory: ./backend
+        run: ./vendor/bin/pest
