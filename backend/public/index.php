@@ -8,14 +8,17 @@ use App\Middlewares\CorsMiddleware;
 use App\Middlewares\RateLimitMiddleware;
 use App\Middlewares\SecurityHeadersMiddleware;
 use App\Services\BinService;
+use App\Services\BroadcasterService;
 use App\Controllers\BinController;
 use Phroute\Phroute\RouteCollector;
 use Phroute\Phroute\Dispatcher;
 
 $request = new Request();
 $router = new RouteCollector();
+
 $service = new BinService();
-$controller = new BinController($service);
+$broadcaster = new BroadcasterService();
+$controller = new BinController($service, $broadcaster);
 
 $router->post("/bin/new", function() use ($controller) {
     return $controller->createBin();
@@ -58,7 +61,11 @@ try {
     );
 
 } catch (Throwable $e) {
+    error_log($e->getMessage());
+    error_log($e->getTraceAsString());
+
     Response::json([
-        'error' => 'Internal server error'
+        'error' => 'Internal server error',
+        'message' => $e->getMessage(),
     ], 500);
 }

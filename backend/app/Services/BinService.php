@@ -11,10 +11,10 @@ class BinService
     private BinRepository $bins;
     private RequestRepository $requests;
 
-    public function __construct()
+    public function __construct(?BinRepository $bins = null, ?RequestRepository $requests = null)
     {
-        $this->bins = new BinRepository();
-        $this->requests = new RequestRepository();
+        $this->bins = $bins ?? new BinRepository();
+        $this->requests = $requests ?? new RequestRepository();
     }
 
     public function createBin(): string
@@ -58,7 +58,6 @@ class BinService
     private function generateId(int $length = 30): string
     {
         $chars = '23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
-
         $id = '';
 
         for ($i = 0; $i < $length; $i++) {

@@ -15,17 +15,21 @@ class Connection
             return self::$pdo;
         }
 
-        $dbPath = getenv('DB_PATH');
+       $dbPath = getenv('DB_PATH');
 
         if (!$dbPath) {
             throw new RuntimeException('DB_PATH not defined');
         }
 
-        if (!file_exists($dbPath)) {
+        if ($dbPath !== ':memory:' && !file_exists($dbPath)) {
+            $dir = dirname($dbPath);
+            if (!is_dir($dir) && $dir !== '.') {
+                mkdir($dir, 0755, true);
+            }
             touch($dbPath);
         }
 
-        $pdo = new PDO('sqlite:' . $dbPath);
+        $pdo = new PDO("sqlite:" . $dbPath);
 
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);

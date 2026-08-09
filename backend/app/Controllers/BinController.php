@@ -3,16 +3,18 @@
 namespace App\Controllers;
 
 use App\Services\BinService;
+use App\Services\BroadcasterService;
 use App\DTO\CapturedRequest;
-use Pusher\Pusher;
 
 class BinController
 {
     private BinService $service;
+    private BroadcasterService $broadcaster;
 
-    public function __construct(BinService $service)
+    public function __construct(BinService $service, BroadcasterService $broadcaster)
     {
         $this->service = $service;
+        $this->broadcaster = $broadcaster;
     }
 
     public function createBin(): array
@@ -43,16 +45,7 @@ class BinController
 
         $this->service->storeRequest($bin, $request);
 
-        $options = [
-            'useTLS' => false,
-            'host' => 'soketi',
-            'port' => 6001,
-            'scheme' => 'http'
-        ];
-
-        $pusher = new Pusher(getenv('SOKETI_DEFAULT_APP_KEY'), getenv('SOKETI_DEFAULT_APP_SECRET'), getenv('SOKETI_DEFAULT_APP_ID'), $options);
-        
-        $pusher->trigger("bin-$bin", 'request.received', $request->toArray());
+        $this->broadcaster->broadcast("bin-$bin", 'request.received', $request->toArray());
 
         return ["status" => "success"];
     }

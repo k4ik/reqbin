@@ -25,7 +25,7 @@ class RateLimitMiddleware implements MiddlewareInterface
 
         $key = "rate_limit:$ip";
 
-        $limit = 100;
+        $limit = 16;
         $window = 60;
 
         $requests = $this->redis->incr($key);

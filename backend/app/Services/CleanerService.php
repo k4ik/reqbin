@@ -8,17 +8,14 @@ class CleanerService
 {
     private BinRepository $bins;
 
-    public function __construct()
+    public function __construct(?BinRepository $bins = null)
     {
-        $this->bins = new BinRepository;
+        $this->bins = $bins ?? new BinRepository();
     }
 
     public function run(): void
     {
-        while (true) {
-            $this->bins->deleteExpired();
-            echo '[Cleaner] executed at ' . date('Y-m-d H:i:s') . PHP_EOL;
-            sleep(1800);
-        }
+        $this->bins->deleteExpired();
+        echo '[Cleaner] executed at ' . date('Y-m-d H:i:s') . PHP_EOL;
     }
 }
