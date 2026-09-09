@@ -9,8 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-<video src="./preview/file.mp4" muted playsinline width="100%"></video>
-
+https://github.com/user-attachments/assets/447890d0-3263-4025-bd5e-fea7583f7008
 </div>
 
 ---
