@@ -9,7 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-https://github.com/user-attachments/assets/447890d0-3263-4025-bd5e-fea7583f7008
+https://github.com/user-attachments/assets/ddca0d93-573d-4a76-9d16-eb2e9ef27fa5
 </div>
 
 ---
